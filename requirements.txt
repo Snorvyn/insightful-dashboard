@@ -1,0 +1,8 @@
+cat > requirements.txt << 'EOF'
+streamlit
+requests
+python-dotenv
+pandas
+plotly
+python-dateutil
+EOF
