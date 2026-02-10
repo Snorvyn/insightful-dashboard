@@ -80,7 +80,7 @@ def ms_to_hhmm(ms: int) -> str:
     total_minutes = int(round(ms / 60000))
     h = total_minutes // 60
     m = total_minutes % 60
-    return f"{h}:{m:02d}"
+    return f"{h}h {m:02d}m"
 
 def week_monday(d: date) -> date:
     return d - timedelta(days=d.weekday())  # Monday = 0
@@ -370,22 +370,44 @@ pivot = (
       .reindex(employee_order)
 )
 
+# Matching pivot for hh:mm tooltips (store ms too)
+pivot_ms = (
+    df.pivot_table(index="employee", columns="task", values="ms", aggfunc="sum", fill_value=0)
+      .reindex(employee_order)
+)
+
+def ms_to_hhmm_safe(ms):
+    ms = int(ms or 0)
+    total_minutes = int(round(ms / 60000))
+    h = total_minutes // 60
+    m = total_minutes % 60
+    return f"{h}h {m:02d}m"
+
+
 fig = go.Figure()
 
 for task in task_order:
     if task not in pivot.columns:
         continue
-    y = pivot[task].tolist()
-    # custom hover shows task, employee, hh:mm
-    # we need matching hh:mm: use ms pivot too
+
+    y_hours = pivot[task].tolist()
+
+    # per-point hh:mm based on ms
+    if task in pivot_ms.columns:
+        hhmm_list = [ms_to_hhmm_safe(v) for v in pivot_ms[task].tolist()]
+    else:
+        hhmm_list = ["0:00"] * len(employee_order)
+
     fig.add_trace(
         go.Bar(
             name=task,
             x=employee_order,
-            y=y,
-            hovertemplate=f"<b>{task}</b><br>%{{x}}<br>%{{y:.2f}}h<extra></extra>",
+            y=y_hours,
+            customdata=hhmm_list,  # one hh:mm per bar segment
+            hovertemplate=f"<b>{task}</b><br>%{{x}}<br>%{{customdata}}<extra></extra>",
         )
     )
+
 
 fig.update_layout(
     template="plotly_dark",
