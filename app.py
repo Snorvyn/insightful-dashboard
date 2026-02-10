@@ -28,6 +28,38 @@ headers = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/json"}
 st.set_page_config(page_title="AI Data Engineers — Insightful", layout="wide")
 
 
+# -----------------------------
+# Simple password protection
+# -----------------------------
+def check_password():
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+
+    if st.session_state.authenticated:
+        return True
+
+    st.markdown("### 🔒 Private dashboard")
+
+    password = st.text_input(
+        "Enter password",
+        type="password",
+    )
+
+    if password:
+        if password == st.secrets["APP_PASSWORD"]:
+            st.session_state.authenticated = True
+            st.rerun()
+        else:
+            st.error("Incorrect password")
+
+    return False
+
+
+if not check_password():
+    st.stop()
+
+
+
 
 # -----------------------------
 # Helpers
