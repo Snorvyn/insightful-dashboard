@@ -381,7 +381,9 @@ def ms_to_hhmm_safe(ms):
     total_minutes = int(round(ms / 60000))
     h = total_minutes // 60
     m = total_minutes % 60
-    return f"{h}h {m:02d}m"
+    # Added bold tags and a unicode clock icon
+    # return f"<b>🕒 {h}h {m:02d}m</b>"
+    return f"🕒  {h}h {m:02d}m"
 
 
 fig = go.Figure()
@@ -410,7 +412,7 @@ for task in task_order:
 
 
 fig.update_layout(
-    template="plotly_dark",
+    template="plotly_white",
     # colorway=[
     #     "#4CC9F0",  # cyan
     #     "#4361EE",  # blue
