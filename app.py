@@ -382,7 +382,6 @@ def ms_to_hhmm_safe(ms):
     h = total_minutes // 60
     m = total_minutes % 60
     # Added bold tags and a unicode clock icon
-    # return f"<b>🕒 {h}h {m:02d}m</b>"
     return f"🕒  {h}h {m:02d}m"
 
 
