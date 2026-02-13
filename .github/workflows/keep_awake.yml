@@ -1,0 +1,12 @@
+name: Wake Streamlit App
+on:
+  schedule:
+    - cron: '0 */10 * * *' # Runs every 10 hours
+  workflow_dispatch:      # Allows you to run it manually to test
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wake up Streamlit
+        run: curl -I https://insightful-dashboard-sa-ai-data-engineering.streamlit.app/
