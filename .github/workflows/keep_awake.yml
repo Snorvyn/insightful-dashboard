@@ -1,12 +1,19 @@
-name: Wake Streamlit App
+name: Wake Streamlit App (Hard Reset)
 on:
   schedule:
-    - cron: '0 */10 * * *' # Runs every 10 hours
-  workflow_dispatch:      # Allows you to run it manually to test
+    - cron: '0 0 * * *' # Runs once a day at midnight
+  workflow_dispatch:      # Allows manual trigger
 
 jobs:
-  ping:
+  auto-commit:
     runs-on: ubuntu-latest
     steps:
-      - name: Wake up Streamlit
-        run: curl -I https://insightful-dashboard-sa-ai-data-engineering.streamlit.app/
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Make empty commit
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git commit --allow-empty -m "Scheduled keep-alive commit"
+          git push
