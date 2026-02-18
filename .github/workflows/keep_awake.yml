@@ -1,19 +1,23 @@
-name: Wake Streamlit App (Hard Reset)
+name: Browser Wake-up Call
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs once a day at midnight
-  workflow_dispatch:      # Allows manual trigger
+    - cron: '0 */6 * * *' # Runs every 6 hours
+  workflow_dispatch:
 
 jobs:
-  auto-commit:
+  wake-up:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Make empty commit
-        run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
-          git commit --allow-empty -m "Scheduled keep-alive commit"
-          git push
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install Selenium
+        run: pip install selenium
+        
+      - name: Run wake script
+        run: python wake_app.py
